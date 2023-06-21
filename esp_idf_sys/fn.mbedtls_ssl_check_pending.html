@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="\brief          Check if there is data already read from the underlying transport but not yet processed."><title>mbedtls_ssl_check_pending in esp_idf_sys - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-f40c346f39d9abc1.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="esp_idf_sys" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (46514218f 2023-06-20)" data-search-js="search-95c92dd01058facf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../static.files/storage-62ce34ea385b278a.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-190c35055d2a8300.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc fn"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../esp_idf_sys/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../esp_idf_sys/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><div class="sidebar-elems"><h2><a href="index.html">In esp_idf_sys</a></h2></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Function <a href="index.html">esp_idf_sys</a>::<wbr><a class="fn" href="#">mbedtls_ssl_check_pending</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/esp_idf_sys/home/runner/work/esp-idf-hal/esp-idf-hal/target/riscv32imc-esp-espidf/debug/build/esp-idf-sys-bb8d988eb52dbf09/out/bindings.rs.html#48162">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>pub unsafe extern &quot;C&quot; fn mbedtls_ssl_check_pending(
+    ssl: *const <a class="struct" href="struct.mbedtls_ssl_context.html" title="struct esp_idf_sys::mbedtls_ssl_context">mbedtls_ssl_context</a>
+) -&gt; c_int</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>\brief          Check if there is data already read from the
+underlying transport but not yet processed.</p>
+<p>\param ssl      SSL context</p>
+<p>\return         0 if nothing’s pending, 1 otherwise.</p>
+<p>\note           This is different in purpose and behaviour from
+\c mbedtls_ssl_get_bytes_avail in that it considers
+any kind of unprocessed data, not only unread
+application data. If \c mbedtls_ssl_get_bytes
+returns a non-zero value, this function will
+also signal pending data, but the converse does
+not hold. For example, in DTLS there might be
+further records waiting to be processed from
+the current underlying transport’s datagram.</p>
+<p>\note           If this function returns 1 (data pending), this
+does not imply that a subsequent call to
+\c mbedtls_ssl_read will provide any data;
+e.g., the unprocessed data might turn out
+to be an alert or a handshake message.</p>
+<p>\note           This function is useful in the following situation:
+If the SSL/TLS module successfully returns from an
+operation - e.g. a handshake or an application record
+read - and you’re awaiting incoming data next, you
+must not immediately idle on the underlying transport
+to have data ready, but you need to check the value
+of this function first. The reason is that the desired
+data might already be read but not yet processed.
+If, in contrast, a previous call to the SSL/TLS module
+returned MBEDTLS_ERR_SSL_WANT_READ, it is not necessary
+to call this function, as the latter error code entails
+that all internal data has been processed.</p>
+</div></details></section></div></main></body></html>

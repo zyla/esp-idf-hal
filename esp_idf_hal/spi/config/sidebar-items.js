@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["BitOrder","Duplex"],"struct":["Config","DriverConfig","V02Type"]};

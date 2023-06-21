@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"esp_idf_hal":[["impl&lt;'d, T: <a class=\"trait\" href=\"esp_idf_hal/gpio/trait.ADCPin.html\" title=\"trait esp_idf_hal::gpio::ADCPin\">ADCPin</a>, ATTEN&gt; <a class=\"trait\" href=\"embedded_hal/adc/trait.Channel.html\" title=\"trait embedded_hal::adc::Channel\">Channel</a>&lt;ATTEN&gt; for <a class=\"struct\" href=\"esp_idf_hal/adc/struct.AdcChannelDriver.html\" title=\"struct esp_idf_hal::adc::AdcChannelDriver\">AdcChannelDriver</a>&lt;'d, T, ATTEN&gt;"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
