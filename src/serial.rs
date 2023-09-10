@@ -725,7 +725,7 @@ impl<UART: Uart> embedded_hal_0_2::serial::Write<u8> for Tx<UART> {
     type Error = SerialError;
 
     fn flush(&mut self) -> nb::Result<(), Self::Error> {
-        match unsafe { uart_wait_tx_done(UART::port(), 0) } {
+        match unsafe { uart_wait_tx_done(UART::port(), crate::delay::portMAX_DELAY) } {
             ESP_OK => Ok(()),
             ESP_ERR_TIMEOUT => Err(nb::Error::WouldBlock),
             _ => Err(nb::Error::Other(SerialError::other(
@@ -747,7 +747,7 @@ impl<UART: Uart> embedded_hal_0_2::serial::Write<u8> for Tx<UART> {
 
 impl<UART: Uart> embedded_hal::serial::nb::Write<u8> for Tx<UART> {
     fn flush(&mut self) -> nb::Result<(), Self::Error> {
-        match unsafe { uart_wait_tx_done(UART::port(), 0) } {
+        match unsafe { uart_wait_tx_done(UART::port(), crate::delay::portMAX_DELAY) } {
             ESP_OK => Ok(()),
             ESP_ERR_TIMEOUT => Err(nb::Error::WouldBlock),
             _ => Err(nb::Error::Other(SerialError::other(
