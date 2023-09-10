@@ -40,16 +40,20 @@
 //! - Address errata 3.17: UART fifo_cnt is inconsistent with FIFO pointer
 
 use core::marker::PhantomData;
+use core::mem::MaybeUninit;
 use core::ptr;
 use core::time::Duration;
 
 use crate::delay::TickType;
 use crate::gpio::*;
+use crate::queue::Queue;
 use crate::units::*;
 
 use esp_idf_sys::*;
 
 const UART_FIFO_SIZE: i32 = 128;
+
+const UART_EVENT_QUEUE_SIZE: i32 = 30;
 
 // /// Interrupt event
 // pub enum Event {
@@ -320,6 +324,7 @@ pub struct Serial<
     pins: Pins<TX, RX, CTS, RTS>,
     rx: Rx<UART>,
     tx: Tx<UART>,
+    event_queue: Queue<uart_event_t>,
 }
 
 /// Serial receiver
@@ -363,13 +368,15 @@ impl<UART: Uart, TX: OutputPin, RX: InputPin, CTS: InputPin, RTS: OutputPin>
             )
         })?;
 
+        let mut event_queue_handle: QueueHandle_t = ptr::null_mut();
+
         esp!(unsafe {
             uart_driver_install(
                 UART::port(),
                 UART_FIFO_SIZE * 2,
                 UART_FIFO_SIZE * 2,
-                0,
-                ptr::null_mut(),
+                UART_EVENT_QUEUE_SIZE,
+                &mut event_queue_handle as *mut QueueHandle_t,
                 0,
             )
         })?;
@@ -379,6 +386,7 @@ impl<UART: Uart, TX: OutputPin, RX: InputPin, CTS: InputPin, RTS: OutputPin>
             pins,
             rx: Rx { _uart: PhantomData },
             tx: Tx { _uart: PhantomData },
+            event_queue: unsafe { Queue::from_handle(event_queue_handle) },
         })
     }
 
