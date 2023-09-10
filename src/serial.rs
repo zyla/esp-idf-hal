@@ -330,6 +330,7 @@ pub struct Serial<
 /// Serial receiver
 pub struct Rx<UART: Uart> {
     _uart: PhantomData<UART>,
+    event_queue: Queue<uart_event_t>,
 }
 
 /// Serial transmitter
@@ -381,12 +382,17 @@ impl<UART: Uart, TX: OutputPin, RX: InputPin, CTS: InputPin, RTS: OutputPin>
             )
         })?;
 
+        let event_queue = unsafe { Queue::from_handle(event_queue_handle) };
+
         Ok(Self {
             uart,
             pins,
-            rx: Rx { _uart: PhantomData },
+            rx: Rx {
+                _uart: PhantomData,
+                event_queue: event_queue.clone(),
+            },
             tx: Tx { _uart: PhantomData },
-            event_queue: unsafe { Queue::from_handle(event_queue_handle) },
+            event_queue,
         })
     }
 
@@ -643,6 +649,11 @@ impl<UART: Uart> Rx<UART> {
     pub fn flush(&self) -> Result<(), EspError> {
         esp!(unsafe { uart_flush_input(UART::port()) })?;
         Ok(())
+    }
+
+    /// Waits for any UART event. Returns true if an event occured, false if timeout.
+    pub fn wait_for_event(&mut self, timeout: Duration) -> bool {
+        self.event_queue.receive(timeout).is_ok()
     }
 }
 
