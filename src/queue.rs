@@ -12,6 +12,9 @@ pub struct Queue<T> {
     _phantom: PhantomData<T>,
 }
 
+unsafe impl<T> Sync for Queue<T> {}
+unsafe impl<T> Send for Queue<T> {}
+
 pub struct Timeout;
 
 const QUEUE_SEND_TO_BACK: c_int = 0;
