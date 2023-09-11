@@ -374,8 +374,8 @@ impl<UART: Uart, TX: OutputPin, RX: InputPin, CTS: InputPin, RTS: OutputPin>
         esp!(unsafe {
             uart_driver_install(
                 UART::port(),
-                UART_FIFO_SIZE * 2,
-                UART_FIFO_SIZE * 2,
+                1024,
+                2048,
                 UART_EVENT_QUEUE_SIZE,
                 &mut event_queue_handle as *mut QueueHandle_t,
                 0,
